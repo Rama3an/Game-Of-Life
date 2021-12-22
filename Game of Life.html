@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Game of Life </title>
+    </head>
+    <body>
+
+    <p> " </p>
+    <p align="center"> <font size="7" color="#4169e1" face="monospace">Game Of Life </font> </p>
+    <p align="center" > <canvas id="myCanvas" width="500px" height=500px"
+                               style="border:3px solid #c3c3c3;">
+   </canvas> </p>
+    <script>
+        function neighborCount(x, y) {
+            let count = 0;
+            for (let i = -1; i <= 1; ++i)
+                for (let j = -1; j <= 1; ++j)
+                    if ((i == 0) && (j == 0))
+                        continue;
+                    else
+                        count += currentField[(x + i + fieldSize) % fieldSize][(y + j + fieldSize) % fieldSize];
+            return count;
+        }
+
+        function returnVoid(){
+            for (let i = 0; i < fieldSize; ++i)
+                for (let j = 0; j < fieldSize; ++j)
+                    currentField[i][j] = nextField[i][j];
+
+        }
+        
+        function nextGeneration(){
+            for (let i = 0; i < fieldSize; ++i) {
+                for (let j = 0; j < fieldSize; ++j) {
+                    if (((currentField[i][j] == 0) && (neighborCount(i, j) === 3))
+                        || ((currentField[i][j] == 1) && (neighborCount(i, j) == 3 || neighborCount(i, j) == 2)))
+                        nextField[i][j] = 1;
+                    else
+                        nextField[i][j] = 0;
+                }
+            }
+            returnVoid();
+            draw();
+        }
+
+        function draw(){
+            for (let i = 0; i < fieldSize; ++i) {
+                for (let j = 0; j < fieldSize; ++j) {
+                    if (currentField[i][j] == 1){
+                        ctx.fillStyle = "#d44141";
+                        ctx.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+                    }
+                    else{
+                        ctx.fillStyle = "#FFFFFF";
+                        ctx.fillRect(i * cellSize, j * cellSize, cellSize, cellSize);
+                    }
+                }
+            }
+        }
+
+        let fieldSize = 25;
+        let cellSize = 25;
+        let currentField = new Array(fieldSize);
+        let nextField = new Array(fieldSize);
+
+        for (let i = 0; i < fieldSize; ++i){
+            currentField[i] = new Array(fieldSize);
+            nextField[i] = new Array(fieldSize);
+        }
+        let canvas = document.getElementById("myCanvas");
+        let ctx = canvas.getContext("2d");
+
+        for (let i = 0; i < fieldSize; ++i) {
+            for (let j = 0; j < fieldSize; ++j) {
+                currentField[i][j] = 1 * (Math.random() > 0.5);
+            }
+        }
+
+        draw();
+
+        let tm = setInterval(nextGeneration, 300);
+    </script>
+    </body>
+</html>
